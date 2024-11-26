@@ -1,7 +1,6 @@
 use chrono::{Local, NaiveTime, Duration};
-use evdev::{Device, InputEvent, InputEventKind};
+use evdev::{Device, InputEventKind};
 use std::collections::VecDeque;
-use std::fs::File;
 use std::io::Result;
 use tokio;
 
@@ -14,7 +13,7 @@ use log4rs::encode::pattern::PatternEncoder;
 async fn main() -> Result<()> {
     let logfile = FileAppender::builder()
         .encoder(Box::new(PatternEncoder::default()))
-        .build("/var/log/autoSleep.log")?;
+        .build("/tmp/autoSleep.log")?;
 
     let config = Config::builder()
         .appender(Appender::builder().build("logfile", Box::new(logfile)))
@@ -23,7 +22,7 @@ async fn main() -> Result<()> {
 
     log4rs::init_config(config).unwrap();
 
-    let mut event_device = Device::open("/dev/input/event4")?;
+    let  event_device = Device::open("/dev/input/event4")?;
     let mut m_event = event_device.into_event_stream().unwrap();
     let mut buf = VecDeque::with_capacity(2);
     let mut last_time = Local::now();
